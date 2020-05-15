@@ -26,6 +26,19 @@
 	</properties>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-gcp-starter-config</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>com.google.guava</groupId>
+           <artifactId>guava</artifactId>
+           <version>20.0</version>
+        </dependency>
+        <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
@@ -73,7 +86,15 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-gcp-dependencies</artifactId>
+                <version>1.1.0.M1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 		</dependencies>
+ 
 	</dependencyManagement>
 
 	<build>
@@ -84,4 +105,14 @@
 			</plugin>
 		</plugins>
 	</build>
+    <repositories>
+         <repository>
+              <id>spring-milestones</id>
+              <name>Spring Milestones</name>
+              <url>https://repo.spring.io/milestone</url>
+              <snapshots>
+                  <enabled>false</enabled>
+              </snapshots>
+         </repository>
+    </repositories>
 </project>
