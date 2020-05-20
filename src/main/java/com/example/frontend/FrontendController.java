@@ -17,6 +17,8 @@ import org.springframework.core.io.WritableResource;
 import org.springframework.util.StreamUtils;
 import java.io.*;
 
+import org.springframework.http.*;
+
 @RefreshScope
 @Controller
 @SessionAttributes("name")
@@ -88,5 +90,22 @@ public class FrontendController {
 		}
 		return "redirect:/";
   }
+
+    // ".+" is necessary to capture URI with filename extension
+    @GetMapping("/image/{filename:.+}")
+    public ResponseEntity<Resource> file(
+            @PathVariable String filename) {
+        String bucket = "gs://" +
+                projectIdProvider.getProjectId();
+        // Use "gs://" URI to construct
+        // a Spring Resource object
+        Resource image = context.getResource(bucket +
+                "/" + filename);
+        // Send it back to the client
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(
+                image, headers, HttpStatus.OK);
+    }
 }
 
