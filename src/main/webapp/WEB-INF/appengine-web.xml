@@ -2,7 +2,7 @@
   <service>default</service>
   <version>1</version>
   <threadsafe>true</threadsafe>
-  <runtime>java8</runtime>
+  <runtime>java11</runtime>
   <instance-class>B4_1G</instance-class>
   <sessions-enabled>true</sessions-enabled>
   <manual-scaling>
