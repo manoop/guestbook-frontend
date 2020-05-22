@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
 import org.springframework.util.StreamUtils;
 import java.io.*;
+import com.google.cloud.vision.v1.*;
 
 import org.springframework.http.*;
 
@@ -42,6 +43,34 @@ public class FrontendController {
 	// Get the Project ID, as its Cloud Storage bucket name here
 	@Autowired
 	private GcpProjectIdProvider projectIdProvider;
+
+    @Autowired
+    private ImageAnnotatorClient annotatorClient;
+
+    private void analyzeImage(String uri) {
+        // After the image was written to GCS,
+        // analyze it with the GCS URI.It's also
+        // possible to analyze an image embedded in
+        // the request as a Base64 encoded payload.
+        List<AnnotateImageRequest> requests = new ArrayList<>();
+        ImageSource imgSrc = ImageSource.newBuilder()
+                .setGcsImageUri(uri).build();
+        Image img = Image.newBuilder().setSource(imgSrc).build();
+        Feature feature = Feature.newBuilder()
+                .setType(Feature.Type.LABEL_DETECTION).build();
+        AnnotateImageRequest request = AnnotateImageRequest
+                .newBuilder()
+                .addFeatures(feature)
+                .setImage(img)
+                .build();
+        requests.add(request);
+        BatchAnnotateImagesResponse responses =
+                annotatorClient.batchAnnotateImages(requests);
+        // We send in one image, expecting just
+        // one response in batch
+        AnnotateImageResponse response =responses.getResponses(0);
+        System.out.println(response);
+    }
 
 	@GetMapping("/")
 	public String index(Model model) {
@@ -75,6 +104,8 @@ public class FrontendController {
 			try (OutputStream os = resource.getOutputStream()) {
 				os.write(file.getBytes());
 			}
+            // After written to GCS, analyze the image.
+            analyzeImage(bucket + "/" + filename);
 		}
 
 		if (message != null && !message.trim().isEmpty()) {
